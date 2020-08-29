@@ -1,0 +1,44 @@
+
+ - rtl8188eur installation instruction by trueToastedCode -
+
+-> This method worked for me 100%. Some steps are just to make make it
+   work for most people, wich are not necessary for all. If you don't know
+   what to do, just follow everything line by line ;D
+
+----------------------------------------
+[Install dependencies]
+sudo apt update && sudo apt -y upgrade
+sudo reboot (If upgraded something)
+sudo apt install bc
+
+[Unload current driver]
+(Stick apapter in)
+sudo rmmod r8188eu.ko
+sudo -i
+echo "blacklist r8188eu" > "/etc/modprobe.d/realtek.conf"
+exit
+
+[Install & load new driver]
+git clone https://github.com/aircrack-ng/rtl8188eus
+cd rtl8188eus
+make
+sudo make install
+sudo modprobe 8188eu
+sudo update-initramfs -u
+
+[To proof that it is 100% working]
+sudo reboot
+
+[Start monitor mode]
+sudo airmon-ng check kill
+sudo ip link set wlan0 down
+sudo iw dev wlan0 set type monitor
+
+----------------------------------------
+[Fix for "no such device (-19)" (...)]
+We can try to load the driver manuell:
+(Stick Adapter in)
+sudo rmmod r8188eu.ko
+sudo modprobe 8188eu
+(Stick Adapter out and in again)
+Now try @[Start monitor mode]
